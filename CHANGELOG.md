@@ -1,0 +1,27 @@
+# Changelog
+
+All notable changes to this package are documented in this file, following
+[Keep a Changelog](https://keepachangelog.com/en/1.1.0/) and
+[Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+## [Unreleased]
+
+## [0.1.0] - 2026-08-01
+
+### Added
+
+- `CheckCommerceClient` entry point with sandbox/production environments and
+  automatic bearer token management (lazy fetch, caching, expiry refresh,
+  single re-auth on rejection) with pluggable token stores.
+- Services covering the full API surface: transactions (ACH, RTP, paper check,
+  IAT), consumers, subscriptions, batches (JSON and file upload), hosted
+  payment pages, and merchant boarding.
+- Typed response resources with forward-compatible raw payload access, native
+  enums for all API enumerations (accepting both string and ordinal forms),
+  and auto-paginating list results.
+- Typed exception hierarchy carrying error codes, correlation ids and
+  per-field validation errors.
+- Safe retry policy: exponential backoff with jitter for 429 (all methods,
+  honoring Retry-After) and for 5xx/network failures (reads only).
+- PSR-18/PSR-17 HTTP abstraction with auto-discovery and Guzzle-aware
+  timeout defaults.
