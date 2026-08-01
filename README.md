@@ -17,7 +17,7 @@ A modern PHP SDK for the [Check Commerce (OBP Link) API](https://sandbox.checkco
 ## Installation
 
 ```bash
-composer require check-commerce/php-sdk guzzlehttp/guzzle
+composer require codearachnid/check-commerce-php-sdk guzzlehttp/guzzle
 ```
 
 Already have a PSR-18 client (Guzzle, Symfony HttpClient, Buzz, ...)? Omit `guzzlehttp/guzzle` — the SDK discovers whatever implementation is installed.

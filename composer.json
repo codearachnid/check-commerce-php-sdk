@@ -1,5 +1,5 @@
 {
-    "name": "check-commerce/php-sdk",
+    "name": "codearachnid/check-commerce-php-sdk",
     "description": "PHP SDK for the Check Commerce (OBP Link) API — ACH, RTP, paper check and IAT payments, consumers, subscriptions, hosted payment pages and merchant boarding.",
     "keywords": [
         "check-commerce",
