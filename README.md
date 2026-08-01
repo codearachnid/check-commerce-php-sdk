@@ -334,14 +334,10 @@ The test suite ships a `FakeHttpClient` pattern you can copy for your own integr
 
 ## Laravel
 
-This package is intentionally framework-free and is designed to be the foundation for a companion Laravel package (service provider, config file, facade, cache-backed token store). Until that ships, binding the client in a service provider is a one-liner:
+This package is intentionally framework-free. For Laravel applications, use the companion package [`codearachnid/check-commerce-laravel-sdk`](https://packagist.org/packages/codearachnid/check-commerce-laravel-sdk) — it wraps this SDK with a service provider, publishable config mapping the `CHECK_COMMERCE_*` environment variables, a `CheckCommerce` facade, a cache-backed token store shared across workers, and a testing fake for feature tests:
 
-```php
-$this->app->singleton(CheckCommerceClient::class, fn () => new CheckCommerceClient([
-    'api_key' => config('services.check_commerce.key'),
-    'merchant_number' => config('services.check_commerce.merchant'),
-    'environment' => config('services.check_commerce.environment', 'sandbox'),
-]));
+```bash
+composer require codearachnid/check-commerce-laravel-sdk
 ```
 
 ## Contributing
