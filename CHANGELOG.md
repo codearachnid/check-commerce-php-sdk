@@ -10,6 +10,9 @@ All notable changes to this package are documented in this file, following
 
 ### Added
 
+- `CheckCommerceClient::fromEnv()` for configuration via the
+  `CHECK_COMMERCE_API_KEY`, `CHECK_COMMERCE_MERCHANT_NUMBER` and
+  `CHECK_COMMERCE_ENVIRONMENT` environment variables.
 - `CheckCommerceClient` entry point with sandbox/production environments and
   automatic bearer token management (lazy fetch, caching, expiry refresh,
   single re-auth on rejection) with pluggable token stores.

@@ -147,6 +147,54 @@ final class CheckCommerceClient
     }
 
     /**
+     * Builds a client from environment variables.
+     *
+     * Reads `CHECK_COMMERCE_API_KEY`, `CHECK_COMMERCE_MERCHANT_NUMBER`, and
+     * optionally `CHECK_COMMERCE_ENVIRONMENT` (`production` or `sandbox`,
+     * defaults to production). Both credentials are required and missing ones
+     * are reported by variable name.
+     *
+     * ```php
+     * $client = CheckCommerceClient::fromEnv();
+     * ```
+     *
+     * @param array<string, mixed> $overrides {@see Configuration::fromArray()}
+     *                                        options that take precedence over
+     *                                        the environment
+     */
+    public static function fromEnv(array $overrides = []): self
+    {
+        $fromEnvironment = array_filter([
+            'api_key' => self::envString('CHECK_COMMERCE_API_KEY'),
+            'merchant_number' => self::envString('CHECK_COMMERCE_MERCHANT_NUMBER'),
+            'environment' => self::envString('CHECK_COMMERCE_ENVIRONMENT'),
+        ], static fn (?string $value): bool => null !== $value);
+
+        $options = $overrides + $fromEnvironment;
+
+        foreach ([
+            'api_key' => 'CHECK_COMMERCE_API_KEY',
+            'merchant_number' => 'CHECK_COMMERCE_MERCHANT_NUMBER',
+        ] as $option => $variable) {
+            if (!\is_string($options[$option] ?? null) || '' === trim($options[$option])) {
+                throw new Exception\InvalidArgumentException(\sprintf(
+                    'The %s environment variable is not set.',
+                    $variable,
+                ));
+            }
+        }
+
+        return new self(Configuration::fromArray($options));
+    }
+
+    private static function envString(string $name): ?string
+    {
+        $value = $_ENV[$name] ?? $_SERVER[$name] ?? getenv($name);
+
+        return \is_string($value) && '' !== trim($value) ? $value : null;
+    }
+
+    /**
      * Forces authentication now and returns the issued token.
      *
      * Calling this is optional — every request authenticates on demand — but

@@ -29,7 +29,7 @@ use CheckCommerce\CheckCommerceClient;
 
 $client = CheckCommerceClient::sandbox(
     apiKey: getenv('CHECK_COMMERCE_API_KEY'),
-    merchantNumber: '999997',
+    merchantNumber: getenv('CHECK_COMMERCE_MERCHANT_NUMBER'),
 );
 
 $result = $client->transactions->debit([
@@ -45,6 +45,17 @@ $result = $client->transactions->debit([
 
 echo $result->transactionId;    // 123456789
 echo $result->status->value;    // "Processed"
+```
+
+Or configure entirely from the environment:
+
+```php
+// Reads CHECK_COMMERCE_API_KEY, CHECK_COMMERCE_MERCHANT_NUMBER, and
+// CHECK_COMMERCE_ENVIRONMENT ("production" or "sandbox", default production).
+$client = CheckCommerceClient::fromEnv();
+
+// Anything not in the environment can be passed as an override:
+$client = CheckCommerceClient::fromEnv(['timeout' => 60, 'max_retries' => 3]);
 ```
 
 Use `CheckCommerceClient::production(...)` for live traffic, or construct with full configuration:
