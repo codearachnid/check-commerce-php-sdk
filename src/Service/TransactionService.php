@@ -20,7 +20,7 @@ final class TransactionService extends AbstractService
      *
      * ```php
      * $result = $client->transactions->create([
-     *     'merchantNumber' => '999997',
+     *     'merchantNumber' => $client->config->merchantNumber,
      *     'transactionType' => TransactionType::Debit,
      *     'amount' => 42.50,
      *     'referenceNumber' => 'INV-1001',
