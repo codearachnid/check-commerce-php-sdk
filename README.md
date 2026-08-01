@@ -32,8 +32,10 @@ $client = CheckCommerceClient::sandbox(
     merchantNumber: getenv('CHECK_COMMERCE_MERCHANT_NUMBER'),
 );
 
+// The API requires the merchant number in every transaction payload;
+// reuse the one the client was configured with:
 $result = $client->transactions->debit([
-    'merchantNumber' => '999997',
+    'merchantNumber' => $client->config->merchantNumber,
     'amount' => 42.50,
     'referenceNumber' => 'INV-1001',
     'consumerInfo' => [
@@ -67,7 +69,7 @@ use CheckCommerce\Scope;
 
 $client = new CheckCommerceClient([
     'api_key' => getenv('CHECK_COMMERCE_API_KEY'),
-    'merchant_number' => '999997',
+    'merchant_number' => getenv('CHECK_COMMERCE_MERCHANT_NUMBER'),
     'environment' => Environment::Sandbox,
     'scopes' => [Scope::Transactions, Scope::HostedPages],
     'timeout' => 30,
@@ -121,15 +123,17 @@ $client = new CheckCommerceClient($config, tokenStore: new CacheTokenStore($cach
 use CheckCommerce\Enums\PaymentType;
 use CheckCommerce\Enums\TransactionType;
 
+$mid = $client->config->merchantNumber; // as configured (e.g. from CHECK_COMMERCE_MERCHANT_NUMBER)
+
 // Sugar for the common operations — sets transactionType for you:
 $client->transactions->debit([...]);
 $client->transactions->credit([...]);
-$client->transactions->void(['merchantNumber' => '999997', 'originalTransaction' => ['transactionId' => 123456789]]);
-$client->transactions->refund(['merchantNumber' => '999997', 'originalTransaction' => ['referenceNumber' => 'INV-1001']]);
+$client->transactions->void(['merchantNumber' => $mid, 'originalTransaction' => ['transactionId' => 123456789]]);
+$client->transactions->refund(['merchantNumber' => $mid, 'originalTransaction' => ['referenceNumber' => 'INV-1001']]);
 
 // Full control — any transaction type, any payment rail:
 $client->transactions->create(
-    ['merchantNumber' => '999997', 'transactionType' => TransactionType::Prenote, /* ... */],
+    ['merchantNumber' => $mid, 'transactionType' => TransactionType::Prenote, /* ... */],
     PaymentType::Rtp,
 );
 
@@ -160,7 +164,7 @@ $client->consumers->update($created->consumerId, ['phoneNumber' => '5125551234']
 
 // Charge a stored consumer:
 $client->transactions->debit([
-    'merchantNumber' => '999997',
+    'merchantNumber' => $client->config->merchantNumber,
     'amount' => 42.50,
     'consumerInfo' => ['consumerId' => $created->consumerId],
 ]);
@@ -226,9 +230,10 @@ header('Location: '.$link->url);
 use CheckCommerce\Enums\FileDelimiter;
 
 // JSON batch:
+$mid = $client->config->merchantNumber;
 $batch = $client->batches->submit([
-    ['merchantNumber' => '999997', 'transactionType' => 'Debit', 'amount' => 42.50, 'consumerInfo' => [...]],
-    ['merchantNumber' => '999997', 'transactionType' => 'Debit', 'amount' => 19.99, 'consumerInfo' => [...]],
+    ['merchantNumber' => $mid, 'transactionType' => 'Debit', 'amount' => 42.50, 'consumerInfo' => [...]],
+    ['merchantNumber' => $mid, 'transactionType' => 'Debit', 'amount' => 19.99, 'consumerInfo' => [...]],
 ]);
 
 // File upload:

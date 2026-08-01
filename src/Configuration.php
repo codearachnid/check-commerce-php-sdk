@@ -12,7 +12,7 @@ use CheckCommerce\Exception\InvalidArgumentException;
  * ```php
  * $config = new Configuration(
  *     apiKey: getenv('CHECK_COMMERCE_API_KEY'),
- *     merchantNumber: '999997',
+ *     merchantNumber: getenv('CHECK_COMMERCE_MERCHANT_NUMBER'),
  *     environment: Environment::Sandbox,
  * );
  * ```

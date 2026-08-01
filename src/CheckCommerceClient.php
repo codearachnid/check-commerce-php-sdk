@@ -30,12 +30,12 @@ use Psr\Http\Message\StreamFactoryInterface;
  *
  * $client = new CheckCommerceClient([
  *     'api_key' => getenv('CHECK_COMMERCE_API_KEY'),
- *     'merchant_number' => '999997',
+ *     'merchant_number' => getenv('CHECK_COMMERCE_MERCHANT_NUMBER'),
  *     'environment' => Environment::Sandbox,
  * ]);
  *
  * $result = $client->transactions->debit([
- *     'merchantNumber' => '999997',
+ *     'merchantNumber' => $client->config->merchantNumber,
  *     'amount' => 42.50,
  *     'consumerInfo' => [
  *         'name' => 'Jane Doe',
