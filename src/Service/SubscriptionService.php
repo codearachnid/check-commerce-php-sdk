@@ -4,10 +4,8 @@ declare(strict_types=1);
 
 namespace CheckCommerce\Service;
 
-use CheckCommerce\Exception\InvalidArgumentException;
 use CheckCommerce\Http\RequestOptions;
 use CheckCommerce\Resources\PaginatedList;
-use CheckCommerce\Resources\Pagination;
 use CheckCommerce\Resources\Subscription;
 use CheckCommerce\Resources\SubscriptionResult;
 
@@ -59,7 +57,7 @@ final class SubscriptionService extends AbstractService
     ): SubscriptionResult {
         $response = $this->transport->request(
             'PUT',
-            '/transaction/subscription/'.$this->encodeId($subscriptionId),
+            '/transaction/subscription/'.$this->encodeId($subscriptionId, 'subscription id'),
             jsonBody: $this->normalizeParams($params),
             options: RequestOptions::from($options),
         );
@@ -80,7 +78,7 @@ final class SubscriptionService extends AbstractService
     ): Subscription {
         $response = $this->transport->request(
             'GET',
-            '/transaction/subscription/'.$this->encodeId($subscriptionId),
+            '/transaction/subscription/'.$this->encodeId($subscriptionId, 'subscription id'),
             query: ['merchantNumber' => $merchantNumber],
             options: RequestOptions::from($options),
         );
@@ -101,45 +99,6 @@ final class SubscriptionService extends AbstractService
      */
     public function list(array $filters = [], RequestOptions|array|null $options = null): PaginatedList
     {
-        $requestOptions = RequestOptions::from($options);
-
-        $response = $this->transport->request(
-            'GET',
-            '/transaction/subscriptions',
-            query: $filters,
-            options: $requestOptions,
-        );
-
-        $payload = $response->data['subscriptions'] ?? [];
-        $payload = \is_array($payload) ? $payload : [];
-
-        $items = [];
-        foreach ((array) ($payload['results'] ?? []) as $subscription) {
-            if (\is_array($subscription)) {
-                $items[] = Subscription::fromArray($subscription);
-            }
-        }
-
-        $pagination = \is_array($payload['pagination'] ?? null)
-            ? Pagination::fromArray($payload['pagination'])
-            : null;
-
-        return new PaginatedList(
-            items: $items,
-            pagination: $pagination,
-            pageFetcher: fn (int $page): PaginatedList => $this->list(
-                ['page' => $page] + $filters,
-                $requestOptions,
-            ),
-        );
-    }
-
-    private function encodeId(string $subscriptionId): string
-    {
-        if ('' === trim($subscriptionId)) {
-            throw new InvalidArgumentException('A subscription id is required.');
-        }
-
-        return rawurlencode($subscriptionId);
+        return $this->paginate('/transaction/subscriptions', 'subscriptions', Subscription::fromArray(...), $filters, RequestOptions::from($options));
     }
 }
