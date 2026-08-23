@@ -20,6 +20,9 @@ All notable changes to this package are documented in this file, following
 
 ### Removed
 
+- `RequestOptions` `headers` and `query`; `correlation_id` is the only
+  per-request option.
+- `ApiResponse::correlationId()`.
 - Configuration options `api_version`, `retry_initial_delay_ms` and
   `retry_max_delay_ms` (and the matching constructor parameters). The API
   version is fixed at `CheckCommerceClient::API_VERSION`; retry backoff is still

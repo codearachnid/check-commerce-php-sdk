@@ -193,10 +193,7 @@ final class HttpTransport
         bool $authenticated,
         \Closure $bodyFactory,
     ): RequestInterface {
-        $request = $this->requestFactory->createRequest(
-            $method,
-            $this->buildUri($path, [...$query, ...$options->query]),
-        );
+        $request = $this->requestFactory->createRequest($method, $this->buildUri($path, $query));
 
         $request = $request
             ->withHeader('Accept', 'application/json')
@@ -217,10 +214,6 @@ final class HttpTransport
 
         if (null !== $options->correlationId) {
             $request = $request->withHeader('X-Correlation-ID', $options->correlationId);
-        }
-
-        foreach ($options->headers as $name => $value) {
-            $request = $request->withHeader($name, $value);
         }
 
         [$body, $contentType] = $bodyFactory();
@@ -302,13 +295,7 @@ final class HttpTransport
      */
     private function decodeJsonLenient(string $body): array
     {
-        if ('' === trim($body)) {
-            return [];
-        }
-
-        $decoded = json_decode($body, true);
-
-        return \is_array($decoded) ? $decoded : [];
+        return \is_array($decoded = json_decode($body, true)) ? $decoded : [];
     }
 
     /**

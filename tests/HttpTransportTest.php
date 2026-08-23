@@ -24,16 +24,12 @@ final class HttpTransportTest extends TestCase
         $this->http->queueAuthToken();
         $this->http->queueJson(200, []);
 
-        $transport->request('POST', '/transaction', jsonBody: ['a' => 1], options: new RequestOptions(
-            correlationId: 'corr-123',
-            headers: ['X-Custom' => 'yes'],
-        ));
+        $transport->request('POST', '/transaction', jsonBody: ['a' => 1], options: new RequestOptions(correlationId: 'corr-123'));
 
         $request = $this->http->lastRequest();
         self::assertSame('1.0', $request->getHeaderLine('api-version'));
         self::assertSame('application/json; ver=1.0', $request->getHeaderLine('Content-Type'));
         self::assertSame('corr-123', $request->getHeaderLine('X-Correlation-ID'));
-        self::assertSame('yes', $request->getHeaderLine('X-Custom'));
         self::assertStringContainsString('check-commerce-php/'.CheckCommerceClient::VERSION, $request->getHeaderLine('User-Agent'));
     }
 
