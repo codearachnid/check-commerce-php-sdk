@@ -114,44 +114,6 @@ final class CheckCommerceClient
     }
 
     /**
-     * Named constructor for the sandbox environment.
-     *
-     * @param list<Scope|string> $scopes
-     */
-    public static function sandbox(
-        #[\SensitiveParameter]
-        string $apiKey,
-        string $merchantNumber,
-        array $scopes = [],
-    ): self {
-        return new self(new Configuration(
-            apiKey: $apiKey,
-            merchantNumber: $merchantNumber,
-            environment: Environment::Sandbox,
-            scopes: $scopes,
-        ));
-    }
-
-    /**
-     * Named constructor for the production environment.
-     *
-     * @param list<Scope|string> $scopes
-     */
-    public static function production(
-        #[\SensitiveParameter]
-        string $apiKey,
-        string $merchantNumber,
-        array $scopes = [],
-    ): self {
-        return new self(new Configuration(
-            apiKey: $apiKey,
-            merchantNumber: $merchantNumber,
-            environment: Environment::Production,
-            scopes: $scopes,
-        ));
-    }
-
-    /**
      * Builds a client from environment variables.
      *
      * Reads `CHECK_COMMERCE_API_KEY`, `CHECK_COMMERCE_MERCHANT_NUMBER`, and

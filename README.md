@@ -26,10 +26,11 @@ composer require codearachnid/check-commerce-php-sdk
 ```php
 use CheckCommerce\CheckCommerceClient;
 
-$client = CheckCommerceClient::sandbox(
-    apiKey: getenv('CHECK_COMMERCE_API_KEY'),
-    merchantNumber: getenv('CHECK_COMMERCE_MERCHANT_NUMBER'),
-);
+$client = new CheckCommerceClient([
+    'api_key' => getenv('CHECK_COMMERCE_API_KEY'),
+    'merchant_number' => getenv('CHECK_COMMERCE_MERCHANT_NUMBER'),
+    'environment' => 'sandbox',
+]);
 
 // The API requires the merchant number in every transaction payload;
 // reuse the one the client was configured with:
@@ -59,7 +60,7 @@ $client = CheckCommerceClient::fromEnv();
 $client = CheckCommerceClient::fromEnv(['timeout' => 60, 'max_retries' => 3]);
 ```
 
-Use `CheckCommerceClient::production(...)` for live traffic, or construct with full configuration:
+The environment defaults to production; every option is documented on `Configuration::fromArray()`:
 
 ```php
 use CheckCommerce\CheckCommerceClient;

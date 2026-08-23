@@ -17,6 +17,9 @@ All notable changes to this package are documented in this file, following
 
 ### Removed
 
+- `CheckCommerceClient::sandbox()` and `CheckCommerceClient::production()`;
+  pass `'environment' => 'sandbox'` (or `Environment::Sandbox`) to the
+  constructor, or use `fromEnv()`.
 - `CheckCommerce\Http\HttpClientFactory` (internal).
 
 ## [0.1.0] - 2026-08-01
