@@ -34,9 +34,6 @@ final class Subscription extends ApiResource
      */
     public static function fromArray(array $data): self
     {
-        $endCodeRaw = $data['endCode'] ?? null;
-        $statusRaw = $data['status'] ?? null;
-        $transactionTypeRaw = $data['transactionType'] ?? null;
         $consumerInfo = self::arrayValue($data, 'consumerInfo');
 
         $subscription = new self(
@@ -46,11 +43,11 @@ final class Subscription extends ApiResource
             amount: self::floatValue($data, 'amount'),
             amountTotal: self::floatValue($data, 'amountTotal'),
             scheduleCode: self::stringValue($data, 'schCode'),
-            endCode: \is_string($endCodeRaw) || \is_int($endCodeRaw) ? SubscriptionEndCode::fromApi($endCodeRaw) : null,
+            endCode: SubscriptionEndCode::fromApi($data['endCode'] ?? null),
             endTime: self::dateValue($data, 'endTime'),
             notes: self::stringValue($data, 'notes'),
-            transactionType: \is_string($transactionTypeRaw) || \is_int($transactionTypeRaw) ? TransactionType::fromApi($transactionTypeRaw) : null,
-            status: \is_string($statusRaw) || \is_int($statusRaw) ? SubscriptionStatus::fromApi($statusRaw) : null,
+            transactionType: TransactionType::fromApi($data['transactionType'] ?? null),
+            status: SubscriptionStatus::fromApi($data['status'] ?? null),
             consumerInfo: null !== $consumerInfo ? Consumer::fromArray($consumerInfo) : null,
         );
         $subscription->raw = $data;

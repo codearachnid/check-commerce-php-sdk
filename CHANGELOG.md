@@ -8,6 +8,9 @@ All notable changes to this package are documented in this file, following
 
 ### Changed
 
+- Enum `fromApi()` accepts any value and returns `null` for anything that is
+  not a known name, ordinal or case, so raw payload fields can be passed
+  straight through.
 - `ApiException` exposes its fields as public readonly properties
   (`$statusCode`, `$errorCode`, `$title`, `$detail`, `$correlationId`,
   `$validationErrors`, `$responseBody`, `$responseHeaders`), matching the

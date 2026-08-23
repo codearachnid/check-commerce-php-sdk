@@ -39,7 +39,6 @@ final class TransactionResult extends ApiResource
         $statusRaw = $data['status'] ?? null;
         $statusRaw = \is_string($statusRaw) || \is_int($statusRaw) ? $statusRaw : null;
 
-        $paymentTypeRaw = $data['paymentType'] ?? null;
         $processingFailure = self::arrayValue($data, 'processingFailure');
         $paperCheckDetails = self::arrayValue($data, 'paperCheckDetails');
 
@@ -51,7 +50,7 @@ final class TransactionResult extends ApiResource
             consumerInfoId: self::stringValue($data, 'consumerInfoId'),
             notes: self::stringList($data, 'notes'),
             processingFailure: null !== $processingFailure ? ProcessingError::fromArray($processingFailure) : null,
-            paymentType: \is_string($paymentTypeRaw) || \is_int($paymentTypeRaw) ? PaymentType::fromApi($paymentTypeRaw) : null,
+            paymentType: PaymentType::fromApi($data['paymentType'] ?? null),
             paperCheckDetails: null !== $paperCheckDetails ? PaperCheckDetails::fromArray($paperCheckDetails) : null,
         );
         $result->raw = $data;
