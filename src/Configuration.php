@@ -33,14 +33,9 @@ final class Configuration
      * @param string|null $baseUrl overrides the environment base URL when set
      * @param list<Scope|string> $scopes scopes to request for issued tokens; empty
      *                                   requests every scope available to the API key
-     * @param string $apiVersion API version sent with every request
-     * @param float $timeout request timeout in seconds, applied when the SDK builds
-     *                       its own HTTP client
-     * @param float $connectTimeout connection timeout in seconds, applied when the
-     *                              SDK builds its own HTTP client
+     * @param float $timeout request timeout in seconds, applied to the default HTTP client
+     * @param float $connectTimeout connection timeout in seconds, applied to the default HTTP client
      * @param int $maxRetries maximum number of retries for retryable requests
-     * @param int $retryInitialDelayMs base delay before the first retry
-     * @param int $retryMaxDelayMs upper bound for the retry backoff delay
      * @param int $tokenExpiryMarginSeconds tokens are refreshed this many seconds
      *                                      before their reported expiry
      */
@@ -51,12 +46,9 @@ final class Configuration
         Environment|string $environment = Environment::Production,
         ?string $baseUrl = null,
         array $scopes = [],
-        public readonly string $apiVersion = '1.0',
         public readonly float $timeout = 30.0,
         public readonly float $connectTimeout = 10.0,
         public readonly int $maxRetries = 2,
-        public readonly int $retryInitialDelayMs = 500,
-        public readonly int $retryMaxDelayMs = 8000,
         public readonly int $tokenExpiryMarginSeconds = 60,
     ) {
         if ('' === trim($apiKey)) {
@@ -91,8 +83,7 @@ final class Configuration
      *
      * Accepted keys mirror the constructor parameters in snake_case:
      * `api_key`, `merchant_number`, `environment`, `base_url`, `scopes`,
-     * `api_version`, `timeout`, `connect_timeout`, `max_retries`,
-     * `retry_initial_delay_ms`, `retry_max_delay_ms`, `token_expiry_margin_seconds`.
+     * `timeout`, `connect_timeout`, `max_retries`, `token_expiry_margin_seconds`.
      *
      * @param array<string, mixed> $options
      */
@@ -100,8 +91,7 @@ final class Configuration
     {
         $known = [
             'api_key', 'merchant_number', 'environment', 'base_url', 'scopes',
-            'api_version', 'timeout', 'connect_timeout', 'max_retries',
-            'retry_initial_delay_ms', 'retry_max_delay_ms', 'token_expiry_margin_seconds',
+            'timeout', 'connect_timeout', 'max_retries', 'token_expiry_margin_seconds',
         ];
 
         if ([] !== $unknown = array_diff(array_keys($options), $known)) {
@@ -118,12 +108,9 @@ final class Configuration
             environment: $options['environment'] ?? Environment::Production,
             baseUrl: $options['base_url'] ?? null,
             scopes: $options['scopes'] ?? [],
-            apiVersion: (string) ($options['api_version'] ?? '1.0'),
             timeout: (float) ($options['timeout'] ?? 30.0),
             connectTimeout: (float) ($options['connect_timeout'] ?? 10.0),
             maxRetries: (int) ($options['max_retries'] ?? 2),
-            retryInitialDelayMs: (int) ($options['retry_initial_delay_ms'] ?? 500),
-            retryMaxDelayMs: (int) ($options['retry_max_delay_ms'] ?? 8000),
             tokenExpiryMarginSeconds: (int) ($options['token_expiry_margin_seconds'] ?? 60),
         );
     }

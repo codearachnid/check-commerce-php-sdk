@@ -8,7 +8,6 @@ use CheckCommerce\Auth\AccessToken;
 use CheckCommerce\Auth\Authenticator;
 use CheckCommerce\Auth\InMemoryTokenStore;
 use CheckCommerce\Auth\TokenStoreInterface;
-use CheckCommerce\Http\HttpClientFactory;
 use CheckCommerce\Http\HttpTransport;
 use CheckCommerce\Service\BatchService;
 use CheckCommerce\Service\BoardingService;
@@ -16,7 +15,8 @@ use CheckCommerce\Service\ConsumerService;
 use CheckCommerce\Service\HostedPageService;
 use CheckCommerce\Service\SubscriptionService;
 use CheckCommerce\Service\TransactionService;
-use Http\Discovery\Psr17FactoryDiscovery;
+use GuzzleHttp\Client;
+use GuzzleHttp\Psr7\HttpFactory;
 use Psr\Http\Client\ClientInterface;
 use Psr\Http\Message\RequestFactoryInterface;
 use Psr\Http\Message\StreamFactoryInterface;
@@ -53,6 +53,9 @@ final class CheckCommerceClient
 {
     public const VERSION = '0.1.0';
 
+    /** API version sent with every request. */
+    public const API_VERSION = '1.0';
+
     public readonly Configuration $config;
 
     public readonly TransactionService $transactions;
@@ -72,8 +75,8 @@ final class CheckCommerceClient
     /**
      * @param Configuration|array<string, mixed> $config a {@see Configuration}
      *                                                   or an options array accepted by {@see Configuration::fromArray()}
-     * @param ClientInterface|null $httpClient any PSR-18 client; discovered
-     *                                         automatically when omitted
+     * @param ClientInterface|null $httpClient any PSR-18 client; defaults to a
+     *                                         Guzzle client using the configured timeouts
      * @param TokenStoreInterface|null $tokenStore bearer token storage; defaults
      *                                             to per-process in-memory storage
      */
@@ -88,9 +91,14 @@ final class CheckCommerceClient
 
         $transport = new HttpTransport(
             $this->config,
-            $httpClient ?? HttpClientFactory::create($this->config),
-            $requestFactory ?? Psr17FactoryDiscovery::findRequestFactory(),
-            $streamFactory ?? Psr17FactoryDiscovery::findStreamFactory(),
+            $httpClient ?? new Client([
+                'timeout' => $this->config->timeout,
+                'connect_timeout' => $this->config->connectTimeout,
+                'http_errors' => false,
+                'allow_redirects' => false,
+            ]),
+            $requestFactory ?? new HttpFactory(),
+            $streamFactory ?? new HttpFactory(),
         );
 
         $this->authenticator = new Authenticator(
@@ -106,44 +114,6 @@ final class CheckCommerceClient
         $this->subscriptions = new SubscriptionService($transport);
         $this->hostedPages = new HostedPageService($transport);
         $this->boarding = new BoardingService($transport);
-    }
-
-    /**
-     * Named constructor for the sandbox environment.
-     *
-     * @param list<Scope|string> $scopes
-     */
-    public static function sandbox(
-        #[\SensitiveParameter]
-        string $apiKey,
-        string $merchantNumber,
-        array $scopes = [],
-    ): self {
-        return new self(new Configuration(
-            apiKey: $apiKey,
-            merchantNumber: $merchantNumber,
-            environment: Environment::Sandbox,
-            scopes: $scopes,
-        ));
-    }
-
-    /**
-     * Named constructor for the production environment.
-     *
-     * @param list<Scope|string> $scopes
-     */
-    public static function production(
-        #[\SensitiveParameter]
-        string $apiKey,
-        string $merchantNumber,
-        array $scopes = [],
-    ): self {
-        return new self(new Configuration(
-            apiKey: $apiKey,
-            merchantNumber: $merchantNumber,
-            environment: Environment::Production,
-            scopes: $scopes,
-        ));
     }
 
     /**

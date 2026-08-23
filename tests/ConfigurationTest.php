@@ -82,6 +82,8 @@ final class ConfigurationTest extends TestCase
         self::assertSame(TransactionStatus::Nsf, TransactionStatus::fromApi('nsf'));
         self::assertNull(TransactionStatus::fromApi('NotAThing'));
         self::assertNull(TransactionStatus::fromApi(999));
+        self::assertNull(TransactionStatus::fromApi(null));
+        self::assertNull(TransactionStatus::fromApi(['Processed']));
         self::assertSame(PaymentType::PaperCheck, PaymentType::fromApi(2));
     }
 }

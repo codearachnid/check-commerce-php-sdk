@@ -9,27 +9,32 @@ use CheckCommerce\Resources\ValidationError;
 /**
  * Thrown when the API responds with an error status code.
  *
- * Carries the parsed error payload — problem title, error code, detail,
+ * Exposes the parsed error payload — problem title, error code, detail,
  * correlation id and any per-field validation errors — so callers never
  * need to parse the raw response themselves.
  */
 class ApiException extends \RuntimeException implements CheckCommerceException
 {
     /**
+     * @param int $statusCode HTTP status code of the response
+     * @param string|null $errorCode error code reported by the API, e.g. `PROC:VAL-003`
+     * @param string|null $title short description of the problem
+     * @param string|null $detail detailed description of the problem, useful for troubleshooting
+     * @param string|null $correlationId correlation id for support requests, mirrors the X-Correlation-ID header
+     * @param list<ValidationError> $validationErrors per-field validation errors, if any
      * @param array<string, mixed> $responseBody decoded response body
-     * @param list<ValidationError> $validationErrors
-     * @param array<string, string> $responseHeaders
+     * @param array<string, string> $responseHeaders response headers with lowercase names
      */
     public function __construct(
         string $message,
-        private readonly int $statusCode,
-        private readonly ?string $errorCode = null,
-        private readonly ?string $title = null,
-        private readonly ?string $detail = null,
-        private readonly ?string $correlationId = null,
-        private readonly array $validationErrors = [],
-        private readonly array $responseBody = [],
-        private readonly array $responseHeaders = [],
+        public readonly int $statusCode,
+        public readonly ?string $errorCode = null,
+        public readonly ?string $title = null,
+        public readonly ?string $detail = null,
+        public readonly ?string $correlationId = null,
+        public readonly array $validationErrors = [],
+        public readonly array $responseBody = [],
+        public readonly array $responseHeaders = [],
     ) {
         parent::__construct($message);
     }
@@ -70,66 +75,6 @@ class ApiException extends \RuntimeException implements CheckCommerceException
         };
     }
 
-    /** HTTP status code of the response. */
-    public function getStatusCode(): int
-    {
-        return $this->statusCode;
-    }
-
-    /** Error code reported by the API, e.g. `PROC:VAL-003`. */
-    public function getErrorCode(): ?string
-    {
-        return $this->errorCode;
-    }
-
-    /** Short description of the problem. */
-    public function getTitle(): ?string
-    {
-        return $this->title;
-    }
-
-    /** Detailed description of the problem, useful for troubleshooting. */
-    public function getDetail(): ?string
-    {
-        return $this->detail;
-    }
-
-    /** Correlation id for support requests, mirrors the X-Correlation-ID header. */
-    public function getCorrelationId(): ?string
-    {
-        return $this->correlationId;
-    }
-
-    /**
-     * Per-field validation errors, if any.
-     *
-     * @return list<ValidationError>
-     */
-    public function getValidationErrors(): array
-    {
-        return $this->validationErrors;
-    }
-
-    /**
-     * The decoded response body.
-     *
-     * @return array<string, mixed>
-     */
-    public function getResponseBody(): array
-    {
-        return $this->responseBody;
-    }
-
-    /**
-     * Response headers with lowercase names.
-     *
-     * @return array<string, string>
-     */
-    public function getResponseHeaders(): array
-    {
-        return $this->responseHeaders;
-    }
-
     private static function buildMessage(
         int $statusCode,
         ?string $title,
@@ -139,11 +84,11 @@ class ApiException extends \RuntimeException implements CheckCommerceException
     ): string {
         $parts = [];
 
-        if (null !== $title && '' !== $title) {
+        if (null !== $title) {
             $parts[] = $title;
         }
 
-        if (null !== $detail && '' !== $detail && $detail !== $title) {
+        if (null !== $detail && $detail !== $title) {
             $parts[] = $detail;
         }
 
@@ -152,10 +97,10 @@ class ApiException extends \RuntimeException implements CheckCommerceException
             : implode(': ', $parts);
 
         $context = [];
-        if (null !== $code && '' !== $code) {
+        if (null !== $code) {
             $context[] = 'code: '.$code;
         }
-        if (null !== $correlationId && '' !== $correlationId) {
+        if (null !== $correlationId) {
             $context[] = 'correlation id: '.$correlationId;
         }
 

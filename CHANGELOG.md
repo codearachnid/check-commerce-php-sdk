@@ -6,6 +6,36 @@ All notable changes to this package are documented in this file, following
 
 ## [Unreleased]
 
+### Changed
+
+- Enum `fromApi()` accepts any value and returns `null` for anything that is
+  not a known name, ordinal or case, so raw payload fields can be passed
+  straight through.
+- `ApiException` exposes its fields as public readonly properties
+  (`$statusCode`, `$errorCode`, `$title`, `$detail`, `$correlationId`,
+  `$validationErrors`, `$responseBody`, `$responseHeaders`), matching the
+  response resources; the corresponding `get*()` accessors are removed.
+- Guzzle is now a direct dependency and the default HTTP client; `php-http/discovery`
+  is no longer used. Any PSR-18 client can still be injected into `CheckCommerceClient`.
+
+### Removed
+
+- `RequestOptions` `headers` and `query`; `correlation_id` is the only
+  per-request option.
+- `ApiResponse::correlationId()`.
+- Configuration options `api_version`, `retry_initial_delay_ms` and
+  `retry_max_delay_ms` (and the matching constructor parameters). The API
+  version is fixed at `CheckCommerceClient::API_VERSION`; retry backoff is still
+  bounded by `max_retries`.
+- `PaginatedList::first()`, `isEmpty()`, `count()` and `jsonSerialize()`;
+  use `$page->items` directly. `PaginatedList` remains iterable.
+- `TransactionResult::hasProcessingFailure()`; check
+  `$result->processingFailure` for null.
+- `CheckCommerceClient::sandbox()` and `CheckCommerceClient::production()`;
+  pass `'environment' => 'sandbox'` (or `Environment::Sandbox`) to the
+  constructor, or use `fromEnv()`.
+- `CheckCommerce\Http\HttpClientFactory` (internal).
+
 ## [0.1.0] - 2026-08-01
 
 ### Added

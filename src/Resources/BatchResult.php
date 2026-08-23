@@ -28,11 +28,9 @@ final class BatchResult extends ApiResource
      */
     public static function fromArray(array $data): self
     {
-        $statusRaw = $data['batchStatus'] ?? null;
-
         $result = new self(
             batchId: self::intValue($data, 'batchId'),
-            status: \is_string($statusRaw) || \is_int($statusRaw) ? BatchStatus::fromApi($statusRaw) : null,
+            status: BatchStatus::fromApi($data['batchStatus'] ?? null),
             errors: self::stringList($data, 'errors'),
             totalAmount: self::floatValue($data, 'totalAmount'),
             transactionCount: self::intValue($data, 'transactionCount'),

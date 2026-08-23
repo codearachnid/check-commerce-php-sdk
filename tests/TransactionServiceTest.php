@@ -125,7 +125,7 @@ final class TransactionServiceTest extends TestCase
         $result = $client->transactions->status(transactionId: 123456789);
 
         self::assertTrue($result->isDeclined());
-        self::assertTrue($result->hasProcessingFailure());
+        self::assertNotNull($result->processingFailure);
         self::assertSame('PROC:VAL-003', $result->processingFailure?->code);
         self::assertSame('Threshold', $result->processingFailure?->validationErrors[0]->property);
         self::assertSame(['Threshold Exceeded:Dollars Daily Max'], $result->notes);

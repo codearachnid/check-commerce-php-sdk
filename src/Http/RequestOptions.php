@@ -20,13 +20,9 @@ final class RequestOptions
     /**
      * @param string|null $correlationId sent as the X-Correlation-ID header and
      *                                   echoed back by the API for tracing
-     * @param array<string, string> $headers additional request headers
-     * @param array<string, mixed> $query additional query string parameters
      */
     public function __construct(
         public readonly ?string $correlationId = null,
-        public readonly array $headers = [],
-        public readonly array $query = [],
     ) {
     }
 
@@ -39,21 +35,15 @@ final class RequestOptions
             return $options;
         }
 
-        if (null === $options || [] === $options) {
-            return new self();
-        }
+        $options ??= [];
 
-        if ([] !== $unknown = array_diff(array_keys($options), ['correlation_id', 'headers', 'query'])) {
+        if ([] !== $unknown = array_diff(array_keys($options), ['correlation_id'])) {
             throw new InvalidArgumentException(\sprintf(
-                'Unknown request option(s): %s. Valid options are: correlation_id, headers, query.',
+                'Unknown request option(s): %s. The only valid option is correlation_id.',
                 implode(', ', $unknown),
             ));
         }
 
-        return new self(
-            correlationId: $options['correlation_id'] ?? null,
-            headers: $options['headers'] ?? [],
-            query: $options['query'] ?? [],
-        );
+        return new self(correlationId: $options['correlation_id'] ?? null);
     }
 }

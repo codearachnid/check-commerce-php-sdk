@@ -26,13 +26,11 @@ final class PaperCheckDetails extends ApiResource
      */
     public static function fromArray(array $data): self
     {
-        $status = $data['transactionStatus'] ?? null;
-
         $details = new self(
             checkTransactionId: self::stringValue($data, 'checkTransactionId'),
             checkNumber: self::stringValue($data, 'checkNumber'),
             checkPaymentDate: self::dateValue($data, 'checkPaymentDate'),
-            transactionStatus: \is_string($status) || \is_int($status) ? PaperCheckStatus::fromApi($status) : null,
+            transactionStatus: PaperCheckStatus::fromApi($data['transactionStatus'] ?? null),
             trackingStatus: self::stringValue($data, 'trackingStatus'),
             trackingNumber: self::stringValue($data, 'trackingNumber'),
         );

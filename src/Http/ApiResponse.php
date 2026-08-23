@@ -19,15 +19,4 @@ final class ApiResponse
         public readonly array $data,
     ) {
     }
-
-    public function correlationId(): ?string
-    {
-        $fromBody = $this->data['correlationId'] ?? null;
-
-        if (\is_string($fromBody) && '' !== $fromBody) {
-            return $fromBody;
-        }
-
-        return $this->headers['x-correlation-id'] ?? null;
-    }
 }

@@ -5,12 +5,10 @@ declare(strict_types=1);
 namespace CheckCommerce\Service;
 
 use CheckCommerce\Enums\SortDirection;
-use CheckCommerce\Exception\InvalidArgumentException;
 use CheckCommerce\Http\RequestOptions;
 use CheckCommerce\Resources\Consumer;
 use CheckCommerce\Resources\ConsumerResult;
 use CheckCommerce\Resources\PaginatedList;
-use CheckCommerce\Resources\Pagination;
 
 /**
  * Store and manage consumer profiles for reuse across transactions.
@@ -59,7 +57,7 @@ final class ConsumerService extends AbstractService
     ): Consumer {
         $response = $this->transport->request(
             'GET',
-            '/consumers/'.$this->encodeId($consumerId),
+            '/consumers/'.$this->encodeId($consumerId, 'consumer id'),
             query: ['merchantNumber' => $merchantNumber],
             options: RequestOptions::from($options),
         );
@@ -80,7 +78,7 @@ final class ConsumerService extends AbstractService
     ): ConsumerResult {
         $response = $this->transport->request(
             'PUT',
-            '/consumers/'.$this->encodeId($consumerId),
+            '/consumers/'.$this->encodeId($consumerId, 'consumer id'),
             jsonBody: $this->normalizeParams($params),
             options: RequestOptions::from($options),
         );
@@ -108,45 +106,6 @@ final class ConsumerService extends AbstractService
      */
     public function list(array $filters = [], RequestOptions|array|null $options = null): PaginatedList
     {
-        $requestOptions = RequestOptions::from($options);
-
-        $response = $this->transport->request(
-            'GET',
-            '/consumers',
-            query: $filters,
-            options: $requestOptions,
-        );
-
-        $payload = $response->data['consumers'] ?? [];
-        $payload = \is_array($payload) ? $payload : [];
-
-        $items = [];
-        foreach ((array) ($payload['results'] ?? []) as $consumer) {
-            if (\is_array($consumer)) {
-                $items[] = Consumer::fromArray($consumer);
-            }
-        }
-
-        $pagination = \is_array($payload['pagination'] ?? null)
-            ? Pagination::fromArray($payload['pagination'])
-            : null;
-
-        return new PaginatedList(
-            items: $items,
-            pagination: $pagination,
-            pageFetcher: fn (int $page): PaginatedList => $this->list(
-                ['page' => $page] + $filters,
-                $requestOptions,
-            ),
-        );
-    }
-
-    private function encodeId(string $consumerId): string
-    {
-        if ('' === trim($consumerId)) {
-            throw new InvalidArgumentException('A consumer id is required.');
-        }
-
-        return rawurlencode($consumerId);
+        return $this->paginate('/consumers', 'consumers', Consumer::fromArray(...), $filters, RequestOptions::from($options));
     }
 }

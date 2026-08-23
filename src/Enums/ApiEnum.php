@@ -8,19 +8,27 @@ namespace CheckCommerce\Enums;
  * Lenient parsing for API enum values.
  *
  * The API serializes enums either as their string name or their ordinal
- * position, so both forms are accepted. Unknown values map to null rather
- * than throwing, keeping the SDK forward-compatible with new API values.
+ * position, so both forms are accepted. Unknown values — and values of any
+ * other type — map to null rather than throwing, keeping the SDK
+ * forward-compatible with new API values.
  */
 trait ApiEnum
 {
-    public static function fromApi(self|string|int|null $value): ?self
+    /**
+     * @param mixed $value typically a raw decoded payload field
+     */
+    public static function fromApi(mixed $value): ?self
     {
-        if (null === $value || $value instanceof self) {
+        if ($value instanceof self) {
             return $value;
         }
 
         if (\is_int($value)) {
             return self::cases()[$value] ?? null;
+        }
+
+        if (!\is_string($value)) {
+            return null;
         }
 
         if (null !== $exact = self::tryFrom($value)) {
