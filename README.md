@@ -6,21 +6,20 @@ A modern PHP SDK for the [Check Commerce (OBP Link) API](https://sandbox.checkco
 - **Zero-friction auth** — bearer tokens are acquired, cached and refreshed automatically; pluggable token storage for sharing tokens across processes.
 - **Safe retries** — exponential backoff with jitter for rate limits, server errors and network failures, applied only where a retry cannot double-charge.
 - **Rich errors** — every API failure maps to a typed exception carrying the error code, detail, correlation id and per-field validation errors.
-- **Framework agnostic** — built on PSR-18/PSR-17, works with any HTTP client; no framework required.
+- **Framework agnostic** — ships with Guzzle, accepts any PSR-18 client; no framework required.
 - **Forward compatible** — new API fields and enum values never break the SDK; everything stays reachable through the raw payload.
 
 ## Requirements
 
 - PHP 8.1+
-- A [PSR-18](https://www.php-fig.org/psr/psr-18/) HTTP client and [PSR-17](https://www.php-fig.org/psr/psr-17/) factories ([Guzzle](https://github.com/guzzle/guzzle) is recommended and auto-discovered)
 
 ## Installation
 
 ```bash
-composer require codearachnid/check-commerce-php-sdk guzzlehttp/guzzle
+composer require codearachnid/check-commerce-php-sdk
 ```
 
-Already have a PSR-18 client (Guzzle, Symfony HttpClient, Buzz, ...)? Omit `guzzlehttp/guzzle` — the SDK discovers whatever implementation is installed.
+[Guzzle](https://github.com/guzzle/guzzle) is installed as the default HTTP client; any other [PSR-18](https://www.php-fig.org/psr/psr-18/) client can be [injected](#custom-http-client) instead.
 
 ## Quick start
 
@@ -319,7 +318,7 @@ Unknown enum values parse to `null` instead of throwing; the raw value stays ava
 
 ## Custom HTTP client
 
-Inject any PSR-18 client and PSR-17 factories — useful for proxies, middleware, or tests:
+By default the SDK builds a Guzzle client from the configured `timeout` and `connect_timeout`. Inject any PSR-18 client and PSR-17 factories instead — useful for proxies, middleware, or tests:
 
 ```php
 $client = new CheckCommerceClient(

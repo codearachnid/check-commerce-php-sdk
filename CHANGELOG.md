@@ -6,6 +6,15 @@ All notable changes to this package are documented in this file, following
 
 ## [Unreleased]
 
+### Changed
+
+- Guzzle is now a direct dependency and the default HTTP client; `php-http/discovery`
+  is no longer used. Any PSR-18 client can still be injected into `CheckCommerceClient`.
+
+### Removed
+
+- `CheckCommerce\Http\HttpClientFactory` (internal).
+
 ## [0.1.0] - 2026-08-01
 
 ### Added

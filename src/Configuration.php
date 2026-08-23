@@ -34,10 +34,8 @@ final class Configuration
      * @param list<Scope|string> $scopes scopes to request for issued tokens; empty
      *                                   requests every scope available to the API key
      * @param string $apiVersion API version sent with every request
-     * @param float $timeout request timeout in seconds, applied when the SDK builds
-     *                       its own HTTP client
-     * @param float $connectTimeout connection timeout in seconds, applied when the
-     *                              SDK builds its own HTTP client
+     * @param float $timeout request timeout in seconds, applied to the default HTTP client
+     * @param float $connectTimeout connection timeout in seconds, applied to the default HTTP client
      * @param int $maxRetries maximum number of retries for retryable requests
      * @param int $retryInitialDelayMs base delay before the first retry
      * @param int $retryMaxDelayMs upper bound for the retry backoff delay
