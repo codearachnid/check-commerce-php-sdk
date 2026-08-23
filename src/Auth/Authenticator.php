@@ -29,7 +29,7 @@ final class Authenticator
         $this->cacheKey = 'check-commerce.token.'.hash('sha256', implode('|', [
             $this->config->baseUrl,
             $this->config->merchantNumber,
-            hash('sha256', $this->config->apiKey),
+            $this->config->apiKey,
             implode(',', $this->config->scopes),
         ]));
     }
