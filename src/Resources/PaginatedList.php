@@ -20,7 +20,7 @@ namespace CheckCommerce\Resources;
  *
  * @implements \IteratorAggregate<int, T>
  */
-final class PaginatedList implements \IteratorAggregate, \Countable, \JsonSerializable
+final class PaginatedList implements \IteratorAggregate
 {
     /**
      * @param list<T> $items
@@ -39,25 +39,6 @@ final class PaginatedList implements \IteratorAggregate, \Countable, \JsonSerial
     public function getIterator(): \ArrayIterator
     {
         return new \ArrayIterator($this->items);
-    }
-
-    /** Number of items on this page. */
-    public function count(): int
-    {
-        return \count($this->items);
-    }
-
-    public function isEmpty(): bool
-    {
-        return [] === $this->items;
-    }
-
-    /**
-     * @return T|null
-     */
-    public function first(): mixed
-    {
-        return $this->items[0] ?? null;
     }
 
     public function hasMorePages(): bool
@@ -94,16 +75,5 @@ final class PaginatedList implements \IteratorAggregate, \Countable, \JsonSerial
 
             $page = $page->nextPage();
         }
-    }
-
-    /**
-     * @return array{items: list<T>, pagination: ?Pagination}
-     */
-    public function jsonSerialize(): array
-    {
-        return [
-            'items' => $this->items,
-            'pagination' => $this->pagination,
-        ];
     }
 }

@@ -95,9 +95,9 @@ final class ConsumerServiceTest extends TestCase
 
         $page = $client->consumers->list(['city' => 'Austin']);
 
-        self::assertCount(2, $page);
+        self::assertCount(2, $page->items);
         self::assertTrue($page->hasMorePages());
-        self::assertInstanceOf(Consumer::class, $page->first());
+        self::assertInstanceOf(Consumer::class, $page->items[0]);
         self::assertSame(3, $page->pagination?->totalRecords);
         self::assertStringContainsString('city=Austin', (string) $this->http->lastRequest()->getUri());
     }

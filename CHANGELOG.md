@@ -17,6 +17,10 @@ All notable changes to this package are documented in this file, following
 
 ### Removed
 
+- `PaginatedList::first()`, `isEmpty()`, `count()` and `jsonSerialize()`;
+  use `$page->items` directly. `PaginatedList` remains iterable.
+- `TransactionResult::hasProcessingFailure()`; check
+  `$result->processingFailure` for null.
 - `CheckCommerceClient::sandbox()` and `CheckCommerceClient::production()`;
   pass `'environment' => 'sandbox'` (or `Environment::Sandbox`) to the
   constructor, or use `fromEnv()`.

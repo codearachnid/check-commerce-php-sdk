@@ -59,12 +59,6 @@ final class TransactionResult extends ApiResource
         return $result;
     }
 
-    /** Whether the API reported a processing failure for this transaction. */
-    public function hasProcessingFailure(): bool
-    {
-        return null !== $this->processingFailure;
-    }
-
     public function isDeclined(): bool
     {
         return TransactionStatus::Declined === $this->status

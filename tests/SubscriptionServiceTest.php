@@ -93,9 +93,9 @@ final class SubscriptionServiceTest extends TestCase
 
         $page = $client->subscriptions->list(['includeSuspended' => true]);
 
-        self::assertCount(1, $page);
+        self::assertCount(1, $page->items);
         self::assertFalse($page->hasMorePages());
-        self::assertSame(SubscriptionStatus::Active, $page->first()?->status);
+        self::assertSame(SubscriptionStatus::Active, $page->items[0]->status);
         self::assertStringContainsString('includeSuspended=true', (string) $this->http->lastRequest()->getUri());
     }
 }
