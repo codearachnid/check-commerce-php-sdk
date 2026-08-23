@@ -14,7 +14,7 @@ final class RateLimitException extends ApiException
      */
     public function getRetryAfter(): ?int
     {
-        $retryAfter = $this->getResponseHeaders()['retry-after'] ?? null;
+        $retryAfter = $this->responseHeaders['retry-after'] ?? null;
 
         return null !== $retryAfter && is_numeric($retryAfter) ? (int) $retryAfter : null;
     }

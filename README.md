@@ -276,15 +276,15 @@ use CheckCommerce\Exception\ValidationException;
 try {
     $client->transactions->debit([...]);
 } catch (ValidationException $e) {
-    foreach ($e->getValidationErrors() as $error) {
+    foreach ($e->validationErrors as $error) {
         echo $error->property, ': ', $error->detail, "\n";
     }
 } catch (ApiException $e) {
     // Everything you need for a support ticket:
     log_error($e->getMessage(), [
-        'status' => $e->getStatusCode(),
-        'code' => $e->getErrorCode(),
-        'correlation_id' => $e->getCorrelationId(),
+        'status' => $e->statusCode,
+        'code' => $e->errorCode,
+        'correlation_id' => $e->correlationId,
     ]);
 }
 ```

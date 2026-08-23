@@ -73,7 +73,7 @@ final class HttpTransportTest extends TestCase
                 self::fail("Expected exception for HTTP {$status}");
             } catch (ApiException $exception) {
                 self::assertInstanceOf($expected, $exception);
-                self::assertSame($status, $exception->getStatusCode());
+                self::assertSame($status, $exception->statusCode);
             }
         }
     }
@@ -97,11 +97,11 @@ final class HttpTransportTest extends TestCase
             $transport->request('POST', '/transaction', jsonBody: []);
             self::fail('Expected ValidationException');
         } catch (ValidationException $exception) {
-            self::assertSame('VAL-001', $exception->getErrorCode());
-            self::assertSame('abc-123', $exception->getCorrelationId());
-            self::assertSame('Validation failed', $exception->getTitle());
-            self::assertCount(1, $exception->getValidationErrors());
-            self::assertSame('amount', $exception->getValidationErrors()[0]->property);
+            self::assertSame('VAL-001', $exception->errorCode);
+            self::assertSame('abc-123', $exception->correlationId);
+            self::assertSame('Validation failed', $exception->title);
+            self::assertCount(1, $exception->validationErrors);
+            self::assertSame('amount', $exception->validationErrors[0]->property);
             self::assertStringContainsString('Validation failed', $exception->getMessage());
             self::assertStringContainsString('VAL-001', $exception->getMessage());
         }

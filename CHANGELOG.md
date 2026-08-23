@@ -8,6 +8,10 @@ All notable changes to this package are documented in this file, following
 
 ### Changed
 
+- `ApiException` exposes its fields as public readonly properties
+  (`$statusCode`, `$errorCode`, `$title`, `$detail`, `$correlationId`,
+  `$validationErrors`, `$responseBody`, `$responseHeaders`), matching the
+  response resources; the corresponding `get*()` accessors are removed.
 - Guzzle is now a direct dependency and the default HTTP client; `php-http/discovery`
   is no longer used. Any PSR-18 client can still be injected into `CheckCommerceClient`.
 
