@@ -30,6 +30,10 @@ final class HttpTransport
 {
     private const RETRYABLE_STATUS_CODES = [429, 500, 502, 503, 504];
 
+    private const RETRY_INITIAL_DELAY_MS = 500;
+
+    private const RETRY_MAX_DELAY_MS = 8000;
+
     private ?Authenticator $authenticator = null;
 
     /** @var \Closure(int): void */
@@ -84,7 +88,7 @@ final class HttpTransport
 
             return [
                 $this->encodeJson($jsonBody),
-                'application/json; ver='.$this->config->apiVersion,
+                'application/json; ver='.CheckCommerceClient::API_VERSION,
             ];
         });
     }
@@ -196,7 +200,7 @@ final class HttpTransport
 
         $request = $request
             ->withHeader('Accept', 'application/json')
-            ->withHeader('api-version', $this->config->apiVersion)
+            ->withHeader('api-version', CheckCommerceClient::API_VERSION)
             ->withHeader('User-Agent', \sprintf(
                 'check-commerce-php/%s php/%s',
                 CheckCommerceClient::VERSION,
@@ -368,13 +372,10 @@ final class HttpTransport
     private function backoffDelayMs(int $attempt, ?string $retryAfter = null): int
     {
         if (null !== $retryAfter && is_numeric($retryAfter)) {
-            return min((int) $retryAfter * 1000, $this->config->retryMaxDelayMs);
+            return min((int) $retryAfter * 1000, self::RETRY_MAX_DELAY_MS);
         }
 
-        $ceiling = (int) min(
-            $this->config->retryMaxDelayMs,
-            $this->config->retryInitialDelayMs * (2 ** min($attempt, 30)),
-        );
+        $ceiling = min(self::RETRY_MAX_DELAY_MS, self::RETRY_INITIAL_DELAY_MS * (2 ** min($attempt, 30)));
 
         // Full jitter between 50% and 100% of the ceiling avoids thundering herds.
         return random_int(intdiv($ceiling, 2), max(1, $ceiling));

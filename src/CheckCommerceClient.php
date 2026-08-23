@@ -53,6 +53,9 @@ final class CheckCommerceClient
 {
     public const VERSION = '0.1.0';
 
+    /** API version sent with every request. */
+    public const API_VERSION = '1.0';
+
     public readonly Configuration $config;
 
     public readonly TransactionService $transactions;
